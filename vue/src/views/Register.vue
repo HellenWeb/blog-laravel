@@ -1,5 +1,11 @@
 <template>
     <div>
+        <div v-bind:class="{show_danger: this.error}" role="alert">
+            {{ error }}
+        </div>
+        <div v-bind:class="{show_success: this.msg}" role="alert">
+            {{ msg }}
+        </div>
         <div class="text-center mt-16">
             <h2 class="text-4xl tracking-tight">
                 Sign in into your account
@@ -38,21 +44,53 @@
     </div>
 </template>
 <script>
+import axios from 'axios'
+
 export default {
   name: 'MyReg',
-  data() {
+  data () {
     return {
-        email: null,
-        password: null
+      email: null,
+      password: null,
+      error: null,
+      msg: null
     }
   },
   methods: {
-    registration() {
-        return ""
+    async registration () {
+      try {
+        axios.post('http://127.0.0.1:8000/api/register',
+          {
+            email: this.email,
+            password: this.password
+          })
+          .then(msg => {
+            this.msg = msg.response.data.message
+          })
+          .catch(err => {
+            this.error = err.response.data.message
+          })
+      } catch (e) {}
     }
   }
 }
 </script>
 <style>
+
+.show_danger {
+  padding: 10px;
+  margin-bottom: 4px;
+  background: rgb(235, 68, 68);
+  color: white;
+  border: rgb(235, 68, 68);
+}
+
+.show_success {
+  padding: 10px;
+  margin-bottom: 4px;
+  background: rgb(112, 219, 70);
+  color: white;
+  border: rgb(112, 219, 70);
+}
 
 </style>
