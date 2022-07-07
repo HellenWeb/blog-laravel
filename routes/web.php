@@ -14,3 +14,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post("/api/register", "App\Http\Controllers\RequestLog@Register")->name("reg");
+Route::post("/api/login", "App\Http\Controllers\RequestLog@Login")->name("login");

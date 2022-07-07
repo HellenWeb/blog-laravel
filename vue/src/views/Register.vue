@@ -27,16 +27,13 @@
                     <input v-model="password" name="password" class="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none" type='password' required>
                 </div>
                 <div class="w-full flex items-center justify-between px-3 mb-3 ">
-                    <label for="remember" class="flex items-center w-1/2">
-                    <input type="checkbox" name="" id="" class="mr-1 bg-white shadow">
-                    <span class="text-sm text-gray-700 pt-1">Remember Me</span>
-                    </label>
-                    <div class="w-1/2 text-right">
+                    <div>
                     <a href="#" class="text-blue-500 text-sm tracking-tight">Forget your password?</a>
                     </div>
                 </div>
-                <div class="w-full md:w-full px-3 mb-6">
-                    <button @click.prevent="registration" class="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500">Sign in</button>
+                <div class="w-full md:w-full flex px-3 mb-6">
+                    <button @click.prevent="login" class="mr-2 appearance-none block w-full bg-blue-400 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500">Sign in</button>
+                    <button @click.prevent="registration" class="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500">Sign up</button>
                 </div>
             </div>
         </form>
@@ -45,6 +42,7 @@
 </template>
 <script>
 import axios from 'axios'
+import router from '../routes.js'
 
 export default {
   name: 'MyReg',
@@ -59,7 +57,7 @@ export default {
   methods: {
     async registration () {
       try {
-        axios.post('http://127.0.0.1:8000/api/register',
+        await axios.post('http://127.0.0.1:8000/api/register',
           {
             email: this.email,
             password: this.password
@@ -68,9 +66,26 @@ export default {
             this.msg = msg.response.data.message
           })
           .catch(err => {
+            if (err.response.data.message === 'Route [/] not defined.') {
+              router.push({ name: 'MyHome' })
+              this.msg = err.response.data.message
+            }
             this.error = err.response.data.message
           })
       } catch (e) {}
+    },
+    async login () {
+      await axios.post('http://127.0.0.1:8000/api/login',
+        {
+          email: this.email,
+          password: this.password
+        })
+        .then(msg => {
+          this.msg = msg.response.data.message
+        })
+        .catch(err => {
+          this.error = err.response.data.message
+        })
     }
   }
 }
